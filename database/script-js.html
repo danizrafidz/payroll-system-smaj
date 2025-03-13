@@ -1,0 +1,109 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/3.1.1/luxon.min.js"
+  integrity="sha512-hZKz8wkgOcWeZanRioE6H6AC3OJspzJQyDBB5jLoZ1jIKbYDt5MwVIvU703WwE4sjvKZw9uNmmYlt29xKS27RA=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.4.2/dist/js/tabulator.min.js"></script>
+<script>
+
+  document.getElementById("loginadmin").addEventListener("click", loginAdmin);
+  function loginAdmin() {
+    var userName = prompt("Username", "");
+    var passWord = prompt("Password", "");
+    var url = "https://script.google.com/macros/s/AKfycbxnhvkUBI9JKhvwBhGlEs-J2j8WSyRpzjaAyDWMe9Ul-ParuanYKeFxx0HPgOnfEKiM-w/exec?v=admin"
+
+    if (userName = "admin" && passWord == "1234") {
+      window.open(url);
+    } else {
+      alert("Username atau pasword yang anda masukkan salah !!");
+      window.close();
+    }
+  }
+
+  const elements = {};
+  document.addEventListener("DOMContentLoaded", pageLoad);
+
+  function pageLoad() {
+    elements.alerts = document.getElementById("alerts");
+    elements.search = document.getElementById("search");
+
+    elements.search.addEventListener("input", searchData);
+    loadData();
+  }
+
+  function loadData() {
+    google.script.run
+      .withSuccessHandler((jsData) => {
+        // if data successful returned
+
+        elements.table = new Tabulator("#data-table", {
+          height: 330,
+          data: jsData,
+          layout: "fitColumns",
+          pagination: "true",
+          paginationSize: 10,
+          columns: [
+            // GAJI KOTOR
+            { title: "Nama", field: "Nama", width: 150 },
+            { title: "Jabatan", field: "Jabatan", width: 101 },
+            { title: "Masa Kerja", field: "Masa Kerja", width: 120 },
+            { title: "Gaji Pokok", field: "Gaji Pokok", width: 150 },
+            { title: "Tunjangan Jabatan", field: "Tunjangan Jabatan", width: 150 },
+            { title: "Uang Makan", field: "Uang Makan", width: 150 },
+            { title: "Uang Transportasi", field: "Uang Transportasi", width: 150 },
+            { title: "Total Nilai Lembur", field: "Total Nilai Lembur", width: 150 },
+            { title: "BPJS Kesehatan 4%", field: "BPJS Kesehatan 4%", width: 150 },
+            { title: "BPJS Ketenagakerjaan 3,7%", field: "BPJS Ketenagakerjaan 3,7%", width: 150 },
+            { title: "JUMLAH GAJI KOTOR", field: "JUMLAH GAJI KOTOR", width: 150 },
+
+            // GAJI BERSIH
+            { title: "No BPJS Kesehatan", field: "No BPJS Kesehatan", width: 150 },
+            { title: "No BPJS Ketenagakerjaan", field: "No BPJS Ketenagakerjaan", width: 150 },
+            { title: "BPJS Kesehatan 1%", field: "BPJS Kesehatan 1%", width: 150 },
+            { title: "BPJS Ketenagakerjaan 2%", field: "BPJS Ketenagakerjaan 2%", width: 150 },
+            { title: "Jaminan Pensiun 1%", field: "Jaminan Pensiun 1%", width: 150 },
+            { title: "Status", field: "Status", width: 150 },
+            { title: "JUMLAH POTONGAN", field: "JUMLAH POTONGAN", width: 150 },
+            { title: "JUMLAH GAJI BERSIH", field: "JUMLAH GAJI BERSIH", width: 150 },
+          ],
+        });
+
+        elements.table.on("cellEdited", function (cell) {
+          //cell - cell component
+          const id = cell._cell.row.data.Nama;
+          const field = cell._cell.column.field;
+          const type = cell._cell.column.definition.formatter;
+
+          const val = type === "tickCross" ? Number(cell._cell.value) : cell._cell.value;
+
+          console.log(cell._cell);
+
+          if ([].includes(field)) {
+            elements.alerts.textContent = "Saving Changes...";
+            google.script.run
+              .withSuccessHandler(() => {
+                elements.alerts.textContent = "Changes Saved!";
+                clearAlerts(elements.alerts);
+              })
+              .withFailureHandler((er) => {
+                elements.alerts.textContent = "Error Saving Changes!";
+                clearAlerts(elements.alerts);
+              })
+              .editCell({ id: id, val: val, field: field });
+          }
+        });
+
+        // end if data successful returned
+      })
+      .withFailureHandler((er) => { })
+      .getData();
+  }
+
+  function clearAlerts(el) {
+    setTimeout(() => {
+      el.textContent = "";
+    }, 2500);
+  }
+
+  function searchData(e) {
+    elements.table.setFilter("Nama", "like", e.target.value);
+  }
+</script>

@@ -1,0 +1,236 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/3.1.1/luxon.min.js"
+  integrity="sha512-hZKz8wkgOcWeZanRioE6H6AC3OJspzJQyDBB5jLoZ1jIKbYDt5MwVIvU703WwE4sjvKZw9uNmmYlt29xKS27RA=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.4.2/dist/js/tabulator.min.js"></script>
+<script>
+  const elements = {};
+  document.addEventListener("DOMContentLoaded", pageLoad);
+
+  function pageLoad() {
+    elements.alerts = document.getElementById("alerts");
+    elements.search = document.getElementById("search");
+    elements.tambahdata = document.getElementById("tambahdata");
+
+    elements.search.addEventListener("input", searchData);
+    elements.tambahdata.addEventListener("click", tambahData);
+    loadData();
+  }
+
+  function loadData() {
+    google.script.run
+      .withSuccessHandler((jsData) => {
+        // if data successful returned
+
+        elements.table = new Tabulator("#data-table", {
+          height: 330,
+          data: jsData,
+          layout: "fitColumns",
+          pagination: "true",
+          paginationSize: 10,
+          columns: [
+            // GAJI KOTOR
+            {
+              title: "Timestamp", field: "Timestamp", sorter: "datetime", sorterParams: {
+                format: "dd/MM/yyyy HH:mm:ss",
+                alignEmptyValues: "bottom",
+              }, width: 150
+            },
+            { title: "Nama", field: "Nama", editor: "input", width: 150 },
+            { title: "Jabatan", field: "Jabatan", editor: "list", editorParams: { values: ["Staff", "Supervisor", "Manager"] }, width: 101 },
+            {
+              title: "Masa Kerja", field: "Masa Kerja", editor: "input", validator: "integer", formatter: "money", formatterParams: {
+                decimal: ",",
+                thousand: ".",
+                symbol: " Tahun",
+                symbolAfter: true,
+                precision: false,
+              }, width: 120
+            },
+            {
+              title: "Gaji Pokok", field: "Gaji Pokok", editor: "input", validator: "integer", formatter: "money", formatterParams: {
+                decimal: ",",
+                thousand: ".",
+                symbol: "Rp",
+                symbolAfter: false,
+                precision: false,
+              }, width: 150
+            },
+            {
+              title: "Tunjangan Jabatan", field: "Tunjangan Jabatan", editor: "input", validator: "integer", formatter: "money", formatterParams: {
+                decimal: ",",
+                thousand: ".",
+                symbol: "Rp",
+                symbolAfter: false,
+                precision: false,
+              }, width: 150
+            },
+            {
+              title: "Uang Makan", field: "Uang Makan", editor: "input", validator: "integer", formatter: "money", formatterParams: {
+                decimal: ",",
+                thousand: ".",
+                symbol: "Rp",
+                symbolAfter: false,
+                precision: false,
+              }, width: 150
+            },
+            {
+              title: "Uang Transportasi", field: "Uang Transportasi", editor: "input", validator: "integer", formatter: "money", formatterParams: {
+                decimal: ",",
+                thousand: ".",
+                symbol: "Rp",
+                symbolAfter: false,
+                precision: false,
+              }, width: 150
+            },
+            {
+              title: "Total Nilai Lembur", field: "Total Nilai Lembur", editor: "input", validator: "integer", formatter: "money", formatterParams: {
+                decimal: ",",
+                thousand: ".",
+                symbol: "Rp",
+                symbolAfter: false,
+                precision: false,
+              }, width: 150
+            },
+            {
+              title: "BPJS Kesehatan 4%", field: "BPJS Kesehatan 4%", editor: "input", validator: "integer", formatter: "money", formatterParams: {
+                decimal: ",",
+                thousand: ".",
+                symbol: "Rp",
+                symbolAfter: false,
+                precision: false,
+              }, width: 150
+            },
+            {
+              title: "BPJS Ketenagakerjaan 3,7%", field: "BPJS Ketenagakerjaan 3,7%", editor: "input", validator: "integer", formatter: "money", formatterParams: {
+                decimal: ",",
+                thousand: ".",
+                symbol: "Rp",
+                symbolAfter: false,
+                precision: false,
+              }, width: 150
+            },
+            {
+              title: "JUMLAH GAJI KOTOR", field: "JUMLAH GAJI KOTOR", editor: "input", validator: "integer", formatter: "money", formatterParams: {
+                decimal: ",",
+                thousand: ".",
+                symbol: "Rp",
+                symbolAfter: false,
+                precision: false,
+              }, width: 150
+            },
+
+            // GAJI BERSIH
+            { title: "No BPJS Kesehatan", field: "No BPJS Kesehatan", validator: "integer", editor: "input", width: 150 },
+            { title: "No BPJS Ketenagakerjaan", field: "No BPJS Ketenagakerjaan", validator: "integer", editor: "input", width: 150 },
+            {
+              title: "BPJS Kesehatan 1%", field: "BPJS Kesehatan 1%", editor: "input", validator: "integer", formatter: "money", formatterParams: {
+                decimal: ",",
+                thousand: ".",
+                symbol: "Rp",
+                symbolAfter: false,
+                precision: false,
+              }, width: 150
+            },
+            {
+              title: "BPJS Ketenagakerjaan 2%", field: "BPJS Ketenagakerjaan 2%", editor: "input", validator: "integer", formatter: "money", formatterParams: {
+                decimal: ",",
+                thousand: ".",
+                symbol: "Rp",
+                symbolAfter: false,
+                precision: false,
+              }, width: 150
+            },
+            {
+              title: "Jaminan Pensiun 1%", field: "Jaminan Pensiun 1%", editor: "input", validator: "integer", formatter: "money", formatterParams: {
+                decimal: ",",
+                thousand: ".",
+                symbol: "Rp",
+                symbolAfter: false,
+                precision: false,
+              }, width: 150
+            },
+            { title: "Status", field: "Status", editor: "list", editorParams: { values: ["Tidak Kawin", "Kawin", "Kawin Anak 1", "Kawin Anak 2", "Kawin Anak 3"] }, width: 150 },
+            {
+              title: "JUMLAH POTONGAN", field: "JUMLAH POTONGAN", editor: "input", validator: "integer", formatter: "money", formatterParams: {
+                decimal: ",",
+                thousand: ".",
+                symbol: "Rp",
+                symbolAfter: false,
+                precision: false,
+              }, width: 150
+            },
+            {
+              title: "JUMLAH GAJI BERSIH", field: "JUMLAH GAJI BERSIH", editor: "input", validator: "integer", formatter: "money", formatterParams: {
+                decimal: ",",
+                thousand: ".",
+                symbol: "Rp",
+                symbolAfter: false,
+                precision: false,
+              }, width: 150
+            },
+          ],
+        });
+
+        elements.table.on("cellEdited", function (cell) {
+          //cell - cell component
+          const id = cell._cell.row.data.Timestamp;
+          const field = cell._cell.column.field;
+          const type = cell._cell.column.definition.formatter;
+
+          const val = type === "tickCross" ? Number(cell._cell.value) : cell._cell.value;
+
+          console.log(cell._cell);
+
+          if (["Timestamp", "Nama", "Jabatan", "Masa Kerja", "Gaji Pokok", "Tunjangan Jabatan", "Uang Makan", "Uang Transportasi", "Total Nilai Lembur", "BPJS Kesehatan 4%", "BPJS Ketenagakerjaan 3,7%", "JUMLAH GAJI KOTOR", "No BPJS Kesehatan", "No BPJS Ketenagakerjaan", "BPJS Kesehatan 1%", "BPJS Ketenagakerjaan 2%", "Jaminan Pensiun 1%", "Status", "JUMLAH POTONGAN", "JUMLAH GAJI BERSIH"].includes(field)) {
+            elements.alerts.textContent = "Saving Changes...";
+            google.script.run
+              .withSuccessHandler(() => {
+                elements.alerts.textContent = "Changes Saved!";
+                clearAlerts(elements.alerts);
+              })
+              .withFailureHandler((er) => {
+                elements.alerts.textContent = "Error Saving Changes!";
+                clearAlerts(elements.alerts);
+              })
+              .editCell({ id: id, val: val, field: field });
+          }
+        });
+
+        // end if data successful returned
+      })
+      .withFailureHandler((er) => { })
+      .getData();
+  }
+
+  function clearAlerts(el) {
+    setTimeout(() => {
+      el.textContent = "";
+    }, 2500);
+  }
+
+  function searchData(e) {
+    elements.table.setFilter("Nama", "like", e.target.value);
+  }
+
+  function tambahData(e) {
+    google.script.run
+      .withSuccessHandler((timestamp) => {
+        elements.table.addRow({ Timestamp: timestamp, height: 1 }, false);
+      })
+      .withFailureHandler((er) => {
+        console.log("Error menambahkan baris")
+      })
+      .addRecord()
+  }
+
+  // function hapusData(e) {
+  //   google.script.run
+  //     .withSuccessHandler(() => {
+  //       elements.table.deleteRow(1);
+  //     })
+  //     .withFailureHandler((er) => {
+  //       console.log("Error menambahkan baris")
+  //     })
+  //     .deleteRecord()
+  // }
+</script>

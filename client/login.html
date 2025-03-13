@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <?!= include("login-css"); ?>
+</head>
+
+<body>
+  <h2>Welcome to Payroll System<br>
+    Untuk Akses ke Halaman Perhitungan Gaji Silahkan Login</h2>
+
+  <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+
+  <div id="id01" class="modal">
+
+    <form id="login-form" class="modal-content animate" method="post">
+      <div class="imgcontainer">
+        <span onclick="document.getElementById('id01').style.display='none'" class="close"
+          title="Close Modal">&times;</span>
+        <img src="https://cdn.discordapp.com/attachments/1050683600808456273/1050683651316260914/login.png" alt="Avatar"
+          class="avatar">
+      </div>
+      <div class="container">
+        <p id="login-error-msg">Username atau Password Salah</p>
+        <input type="text" placeholder="Username" name="username" required>
+        <input type="password" placeholder="Password" name="password" required><br>
+        <button type="submit" id="login-form-submit">Login</button>
+        <button type="button" onclick="document.getElementById('id01').style.display='none'"
+          class="cancelbtn">Cancel</button>
+      </div>
+    </form>
+  </div>
+  <?!= include("login-js"); ?>
+</body>
+
+</html>

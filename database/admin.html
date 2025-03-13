@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <link href="https://unpkg.com/tabulator-tables@5.4.2/dist/css/tabulator_simple.min.css" rel="stylesheet">
+  <?!= include("styles-css"); ?>
+</head>
+
+<body>
+  <h2>(ADMIN) REKAPITULASI DATA PAYROLL SYSTEM</h2>
+  <div class="search-box-outer">
+    <a href="https://script.google.com/macros/s/AKfycbxnhvkUBI9JKhvwBhGlEs-J2j8WSyRpzjaAyDWMe9Ul-ParuanYKeFxx0HPgOnfEKiM-w/exec"
+      id="loginadmin">Kembali</a>
+    <br><br>
+    <div class="search-box-inner">
+      <label>Search:</label><input type="text" id="search" placeholder="cari nama..">
+    </div>
+  </div>
+
+  <div class="add-record-box-outer">
+    <div class="add-record-box-inner">
+      <button id="tambahdata">Tambah Data</button>
+    </div>
+  </div>
+
+  <!-- <div class="delete-record-box-outer">
+      <div class="delete-record-box-inner">
+        <button id="hapusdata">Delete Row</button> <- work in progress
+      </div>
+    </div> -->
+
+  <div id="data-table" class="data-table"></div>
+  <div id="alerts"></div>
+
+  <?!= include("admin-js"); ?>
+</body>
+
+</html>

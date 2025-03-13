@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payroll System</title>
+  <style>
+    :root {
+      --primary: #2c3e50;
+      --secondary: #3498db;
+      --accent: #1abc9c;
+      --light: #ecf0f1;
+      --dark: #34495e;
+      --danger: #e74c3c;
+      --success: #2ecc71;
+      --border-radius: 4px;
+      --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background-color: var(--primary);
+      color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .payroll-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 992px) {
+      .payroll-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background-color: var(--secondary);
+      color: white;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .form-group label {
+      width: 200px;
+      font-weight: 500;
+      margin-right: 10px;
+    }
+
+    .form-group .input-wrapper {
+      flex: 1;
+      min-width: 200px;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-size: 14px;
+      transition: var(--transition);
+    }
+
+    .form-control:focus {
+      border-color: var(--secondary);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.25);
+    }
+
+    .form-control[readonly] {
+      background-color: #f8f9fa;
+      cursor: not-allowed;
+    }
+
+    select.form-control {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 28px;
+    }
+
+    .currency-prefix {
+      margin-right: 5px;
+      font-weight: 500;
+    }
+
+    .unit-suffix {
+      margin-left: 5px;
+    }
+
+    .section-divider {
+      margin: 20px 0;
+      border-top: 1px solid #eee;
+      padding-top: 15px;
+      font-weight: 600;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transition);
+      min-width: 100px;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background-color: var(--secondary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #2980b9;
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #c0392b;
+    }
+
+    .btn-success {
+      background-color: var(--success);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: #27ae60;
+    }
+
+    .result-row {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: var(--border-radius);
+      margin-top: 20px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .result-row label {
+      font-size: 16px;
+    }
+
+    .result-row .input-wrapper {
+      width: 200px;
+    }
+
+    .recap-section {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .recap-link {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: var(--primary);
+      color: white;
+      text-decoration: none;
+      border-radius: var(--border-radius);
+      font-size: 16px;
+      font-weight: 500;
+      margin-top: 15px;
+      transition: var(--transition);
+    }
+
+    .recap-link:hover {
+      background-color: #1e2b38;
+      transform: translateY(-2px);
+    }
+
+    .narrow-input {
+      width: 100px !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>PAYROLL SYSTEM</h1>
+    </header>
+
+    <div class="payroll-grid">
+      <!-- Income Section -->
+      <div class="card">
+        <div class="card-header">PEMASUKAN</div>
+        <div class="card-body">
+          <form id="form_pemasukan" name="form_pemasukan">
+            <div class="form-group">
+              <label for="nama">Nama</label>
+              <div class="input-wrapper">
+                <input class="form-control" name="nama" type="text" id="nama" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="jabatan">Jabatan</label>
+              <div class="input-wrapper">
+                <select class="form-control" name="jabatan" id="jabatan"
+                  onchange="Gaji();Transport();Makan();Tunjangan();Lembur1();Lembur2();TotalLembur();BPJSKesehatan1();BPJSKetenagakerjaan1();BPJSKesehatan2();BPJSKetenagakerjaan2();JaminanPensiun()">
+                  <option>Pilih Jabatan</option>
+                  <option value="Staff">Staff</option>
+                  <option value="Supervisor">Supervisor</option>
+                  <option value="Manajer">Manajer</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="masakerja">Masa Kerja</label>
+              <div class="input-wrapper">
+                <input class="form-control narrow-input" name="masakerja" id="masakerja" type="text"
+                  onkeyup="Tunjangan();Lembur1();Lembur2();TotalLembur()">
+                <span class="unit-suffix">Tahun</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="gaji_pokok">Gaji Pokok</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="gaji_pokok" type="text" id="gaji_pokok">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="tunjangan">Tunjangan Jabatan</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="tunjangan" type="integer" id="tunjangan">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="uang_makan">Uang Makan</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="uang_makan" type="text" id="uang_makan">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="uang_transport">Uang Transportasi</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="uang_transport" type="text" id="uang_transport">
+              </div>
+            </div>
+
+            <div class="section-divider">Lembur</div>
+
+            <div class="form-group">
+              <label for="jml_lembur1">Jam Pertama</label>
+              <div class="input-wrapper">
+                <input class="form-control narrow-input" name="jml_lembur1" type="text" id="jml_lembur1"
+                  onkeyup="Lembur1();TotalLembur()">
+                <span class="unit-suffix">Jam</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="jam_pertama">GP+TJx1/173x1.5</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="jam_pertama" type="text" id="jam_pertama">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="jml_lembur2">Jam Kedua</label>
+              <div class="input-wrapper">
+                <input class="form-control narrow-input" name="jml_lembur2" type="text" id="jml_lembur2"
+                  onkeyup="Lembur2();TotalLembur()">
+                <span class="unit-suffix">Jam</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="jam_kedua">GP+TJx1/173x2</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="jam_kedua" type="text" id="jam_kedua">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="total_lembur">Jumlah Nilai Lembur</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="total_lembur" type="text" id="total_lembur">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="bpjs_kesehatan1">BPJS Kesehatan 4%</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="bpjs_kesehatan1" type="text" id="bpjs_kesehatan1">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="bpjs_tenagakerja1">BPJS Ketenagakerjaan 3.7%</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="bpjs_tenagakerja1" type="text" id="bpjs_tenagakerja1">
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary" name="hitung1" id="hitung1"
+                onclick="GajiKotor();NettoSetahun()">Hitung</button>
+              <button type="reset" class="btn btn-danger">Reset</button>
+            </div>
+
+            <div class="result-row">
+              <label>JUMLAH GAJI KOTOR</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="gaji_kotor" type="text" id="gaji_kotor">
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Deductions Section -->
+      <div class="card">
+        <div class="card-header">PENGELUARAN</div>
+        <div class="card-body">
+          <form id="form_pengeluaran" name="form_pengeluaran">
+            <div class="form-group">
+              <label for="No_BPJSKes">No. BPJS Kesehatan</label>
+              <div class="input-wrapper">
+                <input class="form-control" name="No_BPJSKes" type="text" id="No_BPJSKes">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="No_BPJSTK">No. BPJS Ketenagakerjaan</label>
+              <div class="input-wrapper">
+                <input class="form-control" name="No_BPJSTK" type="text" id="No_BPJSTK">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="bpjs_kesehatan2">BPJS Kesehatan 2%</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="bpjs_kesehatan2" type="text" id="bpjs_kesehatan2">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="bpjs_tenagakerja2">BPJS Ketenagakerjaan 1%</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="bpjs_tenagakerja2" type="text" id="bpjs_tenagakerja2">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="jaminan_pensiun">Jaminan Pensiun 3%</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="jaminan_pensiun" type="text" id="jaminan_pensiun">
+              </div>
+            </div>
+
+            <div class="section-divider">Pajak PPh 21</div>
+
+            <div class="form-group">
+              <label for="status">Status</label>
+              <div class="input-wrapper">
+                <select class="form-control" name="status" id="status"
+                  onchange="PTKP();HitungPajak();KenaPajak();JumlahPotongan()">
+                  <option>Pilih Status</option>
+                  <option value="Tidak Kawin">Tidak Kawin</option>
+                  <option value="Kawin">Kawin</option>
+                  <option value="Kawin Anak 1">Kawin Anak 1</option>
+                  <option value="Kawin Anak 2">Kawin Anak 2</option>
+                  <option value="Kawin Anak 3">Kawin Anak 3</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="netto_setahun">Penghasilan Netto Setahun</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="netto_setahun" type="text" id="netto_setahun"
+                  onkeyup="HitungPajak();KenaPajak()">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="ptkp">PTKP</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="ptkp" type="text" id="ptkp">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="kena_pajak">Penghasilan Kena Pajak</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="kena_pajak" type="text" id="kena_pajak">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="jumlah_pajak">Jumlah Pajak Sebulan</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="jumlah_pajak" type="text" id="jumlah_pajak">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="jml_potongan">JUMLAH POTONGAN</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="jml_potongan" type="text" id="jml_potongan">
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary" name="hitung2" id="hitung2"
+                onclick="GajiKotor();GajiBersih()">Hitung</button>
+              <button type="reset" class="btn btn-danger">Reset</button>
+            </div>
+
+            <div class="result-row">
+              <label>JUMLAH GAJI BERSIH</label>
+              <div class="input-wrapper">
+                <span class="currency-prefix">Rp</span>
+                <input class="form-control" readonly name="gaji_bersih" type="text" id="gaji_bersih">
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recap Section -->
+    <div class="recap-section">
+      <button id="rekap" class="btn btn-success">Rekap</button>
+      <div>
+        <a href="https://script.google.com/macros/s/AKfycbzgJpjCWQfnsWvozCDkKMGJN5AHWp_GzH2vGGsxaDy1ypx39A-OQSjL_cocDcPqhJRc8Q/exec"
+          class="recap-link" target="_blank">
+          Lihat Rekapitulasi Data
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Include your existing JavaScript functions here
+    function Gaji() {
+      var jabatan = document.getElementById("jabatan").value;
+      var gaji = 0;
+
+      if (jabatan == "Staff") {
+        gaji = 5000000;
+      } else if (jabatan == "Supervisor") {
+        gaji = 10000000;
+      } else if (jabatan == "Manajer") {
+        gaji = 15000000;
+      }
+
+      document.getElementById("gaji_pokok").value = gaji;
+    }
+
+    function Transport() {
+      var jabatan = document.getElementById("jabatan").value;
+      var transport = 0;
+
+      if (jabatan == "Staff") {
+        transport = 500000;
+      } else if (jabatan == "Supervisor") {
+        transport = 1000000;
+      } else if (jabatan == "Manajer") {
+        transport = 1500000;
+      }
+
+      document.getElementById("uang_transport").value = transport;
+    }
+
+    function Makan() {
+      var jabatan = document.getElementById("jabatan").value;
+      var makan = 0;
+
+      if (jabatan == "Staff") {
+        makan = 500000;
+      } else if (jabatan == "Supervisor") {
+        makan = 1000000;
+      } else if (jabatan == "Manajer") {
+        makan = 1500000;
+      }
+
+      document.getElementById("uang_makan").value = makan;
+    }
+
+    function Tunjangan() {
+      var jabatan = document.getElementById("jabatan").value;
+      var masakerja = parseFloat(document.getElementById("masakerja").value) || 0;
+      var tunjangan = 0;
+
+      if (jabatan == "Staff") {
+        tunjangan = 500000 * masakerja;
+      } else if (jabatan == "Supervisor") {
+        tunjangan = 1000000 * masakerja;
+      } else if (jabatan == "Manajer") {
+        tunjangan = 1500000 * masakerja;
+      }
+
+      document.getElementById("tunjangan").value = tunjangan;
+    }
+
+    function Lembur1() {
+      var jabatan = document.getElementById("jabatan").value;
+      var masakerja = parseFloat(document.getElementById("masakerja").value) || 0;
+      var jml_lembur1 = parseFloat(document.getElementById("jml_lembur1").value) || 0;
+      var gaji_pokok = parseFloat(document.getElementById("gaji_pokok").value) || 0;
+      var tunjangan = parseFloat(document.getElementById("tunjangan").value) || 0;
+
+      var lembur1 = ((gaji_pokok + tunjangan) / 173) * 1.5 * jml_lembur1;
+      document.getElementById("jam_pertama").value = lembur1.toFixed(2);
+    }
+
+    function Lembur2() {
+      var jabatan = document.getElementById("jabatan").value;
+      var masakerja = parseFloat(document.getElementById("masakerja").value) || 0;
+      var jml_lembur2 = parseFloat(document.getElementById("jml_lembur2").value) || 0;
+      var gaji_pokok = parseFloat(document.getElementById("gaji_pokok").value) || 0;
+      var tunjangan = parseFloat(document.getElementById("tunjangan").value) || 0;
+
+      var lembur2 = ((gaji_pokok + tunjangan) / 173) * 2 * jml_lembur2;
+      document.getElementById("jam_kedua").value = lembur2.toFixed(2);
+    }
+
+    function TotalLembur() {
+      var lembur1 = parseFloat(document.getElementById("jam_pertama").value) || 0;
+      var lembur2 = parseFloat(document.getElementById("jam_kedua").value) || 0;
+
+      var total_lembur = lembur1 + lembur2;
+      document.getElementById("total_lembur").value = total_lembur.toFixed(2);
+    }
+
+    function BPJSKesehatan1() {
+      var gaji_pokok = parseFloat(document.getElementById("gaji_pokok").value) || 0;
+      var bpjs_kesehatan1 = gaji_pokok * 0.04;
+
+      document.getElementById("bpjs_kesehatan1").value = bpjs_kesehatan1;
+    }
+
+    function BPJSKetenagakerjaan1() {
+      var gaji_pokok = parseFloat(document.getElementById("gaji_pokok").value) || 0;
+      var bpjs_tenagakerja1 = gaji_pokok * 0.037;
+
+      document.getElementById("bpjs_tenagakerja1").value = bpjs_tenagakerja1;
+    }
+
+    function BPJSKesehatan2() {
+      var gaji_pokok = parseFloat(document.getElementById("gaji_pokok").value) || 0;
+      var bpjs_kesehatan2 = gaji_pokok * 0.02;
+
+      document.getElementById("bpjs_kesehatan2").value = bpjs_kesehatan2;
+    }
+
+    function BPJSKetenagakerjaan2() {
+      var gaji_pokok = parseFloat(document.getElementById("gaji_pokok").value) || 0;
+      var bpjs_tenagakerja2 = gaji_pokok * 0.01;
+
+      document.getElementById("bpjs_tenagakerja2").value = bpjs_tenagakerja2;
+    }
+
+    function JaminanPensiun() {
+      var gaji_pokok = parseFloat(document.getElementById("gaji_pokok").value) || 0;
+      var jaminan_pensiun = gaji_pokok * 0.03;
+
+      document.getElementById("jaminan_pensiun").value = jaminan_pensiun;
+    }
+
+    function GajiKotor() {
+      var gaji_pokok = parseFloat(document.getElementById("gaji_pokok").value) || 0;
+      var tunjangan = parseFloat(document.getElementById("tunjangan").value) || 0;
+      var uang_makan = parseFloat(document.getElementById("uang_makan").value) || 0;
+      var uang_transport = parseFloat(document.getElementById("uang_transport").value) || 0;
+      var total_lembur = parseFloat(document.getElementById("total_lembur").value) || 0;
+      var bpjs_kesehatan1 = parseFloat(document.getElementById("bpjs_kesehatan1").value) || 0;
+      var bpjs_tenagakerja1 = parseFloat(document.getElementById("bpjs_tenagakerja1").value) || 0;
+
+      var gaji_kotor = gaji_pokok + tunjangan + uang_makan + uang_transport + total_lembur + bpjs_kesehatan1 + bpjs_tenagakerja1;
+      document.getElementById("gaji_kotor").value = gaji_kotor.toFixed(2);
+    }
+
+    function NettoSetahun() {
+      var gaji_kotor = parseFloat(document.getElementById("gaji_kotor").value) || 0;
+      var netto_setahun = gaji_kotor * 12;
+
+      document.getElementById("netto_setahun").value = netto_setahun.toFixed(2);
+    }
+
+    function PTKP() {
+      var status = document.getElementById("status").value;
+      var ptkp = 0;
+
+      if (status == "Tidak Kawin") {
+        ptkp = 54000000;
+      } else if (status == "Kawin") {
+        ptkp = 58500000;
+      } else if (status == "Kawin Anak 1") {
+        ptkp = 63000000;
+      } else if (status == "Kawin Anak 2") {
+        ptkp = 67500000;
+      } else if (status == "Kawin Anak 3") {
+        ptkp = 72000000;
+      }
+
+      document.getElementById("ptkp").value = ptkp;
+    }
+
+    function KenaPajak() {
+      var netto_setahun = parseFloat(document.getElementById("netto_setahun").value) || 0;
+      var ptkp = parseFloat(document.getElementById("ptkp").value) || 0;
+
+      var kena_pajak = netto_setahun - ptkp;
+      if (kena_pajak < 0) kena_pajak = 0;
+
+      document.getElementById("kena_pajak").value = kena_pajak.toFixed(2);
+    }
+
+    function HitungPajak() {
+      var kena_pajak = parseFloat(document.getElementById("kena_pajak").value) || 0;
+      var pajak = 0;
+
+      if (kena_pajak <= 50000000) {
+        pajak = kena_pajak * 0.05;
+      } else if (kena_pajak <= 250000000) {
+        pajak = 50000000 * 0.05 + (kena_pajak - 50000000) * 0.15;
+      } else if (kena_pajak <= 500000000) {
+        pajak = 50000000 * 0.05 + 200000000 * 0.15 + (kena_pajak - 250000000) * 0.25;
+      } else {
+        pajak = 50000000 * 0.05 + 200000000 * 0.15 + 250000000 * 0.25 + (kena_pajak - 500000000) * 0.3;
+      }
+
+      var pajak_bulanan = pajak / 12;
+      document.getElementById("jumlah_pajak").value = pajak_bulanan.toFixed(2);
+    }
+
+    function JumlahPotongan() {
+      var bpjs_kesehatan2 = parseFloat(document.getElementById("bpjs_kesehatan2").value) || 0;
+      var bpjs_tenagakerja2 = parseFloat(document.getElementById("bpjs_tenagakerja2").value) || 0;
+      var jaminan_pensiun = parseFloat(document.getElementById("jaminan_pensiun").value) || 0;
+      var jumlah_pajak = parseFloat(document.getElementById("jumlah_pajak").value) || 0;
+
+      var jml_potongan = bpjs_kesehatan2 + bpjs_tenagakerja2 + jaminan_pensiun + jumlah_pajak;
+      document.getElementById("jml_potongan").value = jml_potongan.toFixed(2);
+    }
+
+    function GajiBersih() {
+      var gaji_kotor = parseFloat(document.getElementById("gaji_kotor").value) || 0;
+      var jml_potongan = parseFloat(document.getElementById("jml_potongan").value) || 0;
+
+      var gaji_bersih = gaji_kotor - jml_potongan;
+      document.getElementById("gaji_bersih").value = gaji_bersih.toFixed(2);
+    }
+
+    // Add event listener for the rekap button
+    document.getElementById("rekap").addEventListener("click", function () {
+      // Get form data
+      const nama = document.getElementById("nama").value;
+      const jabatan = document.getElementById("jabatan").value;
+      const gaji_kotor = document.getElementById("gaji_kotor").value;
+      const gaji_bersih = document.getElementById("gaji_bersih").value;
+
+      // You can implement the recap functionality here
+      // For example, you could send this data to your Google Apps Script
+      alert("Data rekap untuk " + nama + " telah disimpan.");
+    });
+  </script>
+</body>
+
+</html>
